@@ -1,0 +1,26 @@
+#!/bin/bash
+if [ -d "./validateA" ] 
+then
+    echo "Directory exists." 
+else
+    mkdir validateA
+fi
+
+# A records
+declare -a StringArray=( {%- for resource in resources -%} "{{ resources[resource].name  }}.{{ parentDomain }}" {% endfor -%})
+ 
+for val in "${StringArray[@]}"; do
+  # nslookup cloudflare server
+  nslookup -type=A $val {{ cloudflare_ns_record }} | grep -e Name -e "Address: " > validateA/${val}_RecordInCloudflare.txt
+  # nslookup general DNS servers
+  nslookup -type=A $val 8.8.8.8 | grep -e Name -e "Address: " > validateA/${val}_RecordInCurrentDNS.txt
+  # validate that the output match
+  DIFF=$(diff "validateA/${val}_RecordInCurrentDNS.txt" "validateA/${val}_RecordInCloudflare.txt")
+  if [ "$DIFF" != "" ] 
+  then
+      echo "$val" >> ./validateA/summaryA.txt
+      # echo full nslookup output
+      nslookup -type=A $val {{ cloudflare_ns_record }} > validateA/${val}_RecordInCloudflare.txt
+      nslookup -type=A $val 8.8.8.8 > validateA/${val}_RecordInCurrentDNS.txt
+  fi
+  done

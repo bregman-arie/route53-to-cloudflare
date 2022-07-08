@@ -1,0 +1,29 @@
+#!/bin/bash
+if [ -d "./validateTXT" ] 
+then
+    echo "Directory exists." 
+else
+    mkdir validateTXT
+fi
+
+# TXT records
+declare -a StringArray=( {%- for resource in resources -%} "{{ resources[resource].name  }}.{{ parentDomain }}" {% endfor -%})
+ 
+for val in "${StringArray[@]}"; do
+  # nslookup cloudflare server
+  nslookup -type=TXT $val {{ cloudflare_ns_record }} | grep text > "validateTXT/${val}_RecordInCloudflare.txt"
+  # nslookup general DNS servers
+  nslookup -type=TXT $val 8.8.8.8 | grep text > "validateTXT/${val}_RecordInCurrentDNS.txt"
+  # sort output
+  sort ./validateTXT/${val}_RecordInCloudflare.txt -o ./validateTXT/${val}_RecordInCloudflare.txt
+  sort ./validateTXT/${val}_RecordInCurrentDNS.txt -o ./validateTXT/${val}_RecordInCurrentDNS.txt
+  # validate that the output match
+  DIFF=$(diff ./validateTXT/${val}_RecordInCurrentDNS.txt ./validateTXT/${val}_RecordInCloudflare.txt)
+  if [ "$DIFF" != "" ] 
+  then
+      echo "$val" >> validateTXT/summaryTXT.txt
+      # echo full nslookup output
+      nslookup -type=TXT $val {{ cloudflare_ns_record }} > validateTXT/${val}_RecordInCloudflare.txt
+      nslookup -type=TXT $val 8.8.8.8 > validateTXT/${val}_RecordInCurrentDNS.txt
+  fi
+  done

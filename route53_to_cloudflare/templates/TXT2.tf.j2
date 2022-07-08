@@ -1,0 +1,17 @@
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_1" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value1 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_2" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value2 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+

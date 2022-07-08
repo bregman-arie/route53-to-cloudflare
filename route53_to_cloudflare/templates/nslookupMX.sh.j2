@@ -1,0 +1,29 @@
+#!/bin/bash
+if [ -d "./validateMX" ] 
+then
+    echo "Directory exists." 
+else
+    mkdir validateMX
+fi
+
+# MX records
+declare -a StringArray=( {%- for resource in resources -%} "{{ resources[resource].name  }}.{{ parentDomain }}" {% endfor -%})
+ 
+for val in "${StringArray[@]}"; do
+  # nslookup cloudflare server
+  nslookup -type=MX $val {{ cloudflare_ns_record }} | grep "mail exchanger" > "validateMX/${val}_RecordInCloudflare.txt"
+  # nslookup general DNS servers
+  nslookup -type=MX $val 8.8.8.8 | grep "mail exchanger" > "validateMX/${val}_RecordInCurrentDNS.txt"
+  # sort output to compare multi-value
+  sort ./validateMX/${val}_RecordInCloudflare.txt -o ./validateMX/${val}_RecordInCloudflare.txt
+  sort ./validateMX/${val}_RecordInCurrentDNS.txt -o ./validateMX/${val}_RecordInCurrentDNS.txt
+  # validate that the output match
+  DIFF=$(diff ./validateMX/${val}_RecordInCurrentDNS.txt ./validateMX/${val}_RecordInCloudflare.txt)
+  if [ "$DIFF" != "" ] 
+  then
+      echo "$val" >> validateMX/summaryMX.txt
+      # echo full nslookup output
+      nslookup -type=MX $val {{ cloudflare_ns_record }} > validateMX/${val}_RecordInCloudflare.txt
+      nslookup -type=MX $val 8.8.8.8 > validateMX/${val}_RecordInCurrentDNS.txt
+  fi
+  done

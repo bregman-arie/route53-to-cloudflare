@@ -1,0 +1,19 @@
+resource "cloudflare_record" "MX_{{ terrafromResource  }}_1" {
+  name     = "{{ name }}"
+  ttl      = "{{ ttl }}"
+  type     = "MX"
+  priority = "{{ priority1 }}"
+  value    = "{{ value1 }}"
+  zone_id  = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "MX_{{ terrafromResource }}_2" {
+  name     = "{{ name }}"
+  ttl      = "{{ ttl }}"
+  type     = "MX"
+  priority = "{{ priority2 }}"
+  value    = "{{ value2 }}"
+  zone_id  = cloudflare_zone.{{ zone_id }}.id
+}
+
+

@@ -1,0 +1,26 @@
+#!/bin/bash
+if [ -d "./validateCNAME" ] 
+then
+    echo "Directory exists." 
+else
+    mkdir validateCNAME
+fi
+
+# CNAME records
+declare -a StringArray=( {%- for resource in resources -%} "{{ resources[resource].name  }}.{{ parentDomain }}" {% endfor -%})
+ 
+for val in "${StringArray[@]}"; do
+  # nslookup cloudflare server
+  nslookup -type=CNAME $val {{ cloudflare_ns_record }} | grep $val > validateCNAME/${val}_RecordInCloudflare.txt
+  # nslookup general DNS servers
+  nslookup -type=CNAME $val 8.8.8.8 | grep $val > validateCNAME/${val}_RecordInCurrentDNS.txt
+  # validate that the output match
+  DIFF=$(diff "validateCNAME/${val}_RecordInCurrentDNS.txt" "validateCNAME/${val}_RecordInCloudflare.txt")
+  if [ "$DIFF" != "" ] 
+  then
+      echo "$val" >> ./validateCNAME/summaryCNAME.txt
+      # echo full nslookup output
+      nslookup -type=CNAME $val {{ cloudflare_ns_record }} > validateCNAME/${val}_RecordInCloudflare.txt
+      nslookup -type=CNAME $val 8.8.8.8 > validateCNAME/${val}_RecordInCurrentDNS.txt
+  fi
+  done

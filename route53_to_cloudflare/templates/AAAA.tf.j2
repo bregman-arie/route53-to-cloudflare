@@ -1,0 +1,9 @@
+resource "cloudflare_record" "AAAA_{{ terrafromResource }}" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "AAAA"
+  value   = "{{ value }}"
+  zone_id = cloudflare_zone.{{ zone_id }}.id
+}
+
+

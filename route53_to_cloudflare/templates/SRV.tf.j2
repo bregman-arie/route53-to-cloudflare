@@ -1,0 +1,20 @@
+{%- for resource in resources -%}
+resource "cloudflare_record" "{{ resource }}SRV" {
+  name = "{{ resources[resource].name }}"
+  ttl  = "{{ resources[resource].ttl }}"
+  type = "SRV"
+
+  data = {
+    service  = "{{ resources[resource].service }}"
+    proto    = "{{ resources[resource].proto }}"
+    name     = {% if resources[resource].data_name %}"{{ resources[resource].data_name }}"{% else %}var.resources[resource].name{% endif %}
+    priority = {{ resources[resource].priority }}
+    weight   = {{ resources[resource].weight }}
+    port     = {{ resources[resource].port }}
+    target   = "{{ resources[resource].target }}"
+  }
+
+  zone_id = cloudflare_zone.{{ terrafromResource  }}.id
+}
+
+{% endfor -%}

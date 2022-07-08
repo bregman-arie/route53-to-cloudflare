@@ -1,0 +1,18 @@
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
+    }
+  }
+}
+
+variable "cloudflare_api_token" {
+  type      = string
+  sensitive = true
+}
+
+provider "cloudflare" {
+  account_id = "{{ account_id }}"
+  api_token  = var.cloudflare_api_token
+}
+

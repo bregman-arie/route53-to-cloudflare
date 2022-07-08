@@ -1,0 +1,46 @@
+resource "cloudflare_record" "MX_{{ terrafromResource  }}_1" {
+  name     = "{{ name }}"
+  ttl      = "{{ ttl }}"
+  type     = "MX"
+  priority = "{{ priority1 }}"
+  value    = "{{ value1 }}"
+  zone_id  = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "MX_{{ terrafromResource }}_2" {
+  name     = "{{ name }}"
+  ttl      = "{{ ttl }}"
+  type     = "MX"
+  priority = "{{ priority2 }}"
+  value    = "{{ value2 }}"
+  zone_id  = cloudflare_zone.{{ zone_id }}.id
+}
+
+resource "cloudflare_record" "MX_{{ terrafromResource }}_3" {
+  name     = "{{ name }}"
+  ttl      = "{{ ttl }}"
+  type     = "MX"
+  priority = "{{ priority3 }}"
+  value    = "{{ value3 }}"
+  zone_id  = cloudflare_zone.{{ zone_id }}.id
+}
+
+resource "cloudflare_record" "MX_{{ terrafromResource }}_4" {
+  name     = "{{ name }}"
+  ttl      = "{{ ttl }}"
+  type     = "MX"
+  priority = "{{ priority4 }}"
+  value    = "{{ value4 }}"
+  zone_id  = cloudflare_zone.{{ zone_id }}.id
+}
+
+resource "cloudflare_record" "MX_{{ terrafromResource }}_5" {
+  name     = "{{ name }}"
+  ttl      = "{{ ttl }}"
+  type     = "MX"
+  priority = "{{ priority5 }}"
+  value    = "{{ value5 }}"
+  zone_id  = cloudflare_zone.{{ zone_id }}.id
+}
+
+

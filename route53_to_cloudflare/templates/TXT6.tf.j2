@@ -1,0 +1,49 @@
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_1" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value1 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_2" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value2 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_3" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value3 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_4" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value4 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_5" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value5 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "TXT_{{ terrafromResource }}_6" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value6 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+

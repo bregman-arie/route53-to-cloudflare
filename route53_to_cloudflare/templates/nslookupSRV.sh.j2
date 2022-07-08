@@ -1,0 +1,9 @@
+#!/bin/bash
+ 
+# Declare a string array with type
+declare -a StringArray=( {%- for resource in resources -%} "{{ resources[resource].name  }}.{{ parentDomain }}" {% endfor -%})
+ 
+# Read the array values with space
+for val in "${StringArray[@]}"; do
+  nslookup -type=SRV $val {{ cloudflare_ns_record }} | grep "** server can't find" | awk '{print $5}' >> errorSRV.txt 
+done

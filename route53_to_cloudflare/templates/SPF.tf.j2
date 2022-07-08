@@ -1,0 +1,9 @@
+resource "cloudflare_record" "SPF_{{ resource }}" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "TXT"
+  value   = "{{ value }}"
+  zone_id = cloudflare_zone.{{ terrafromResource  }}.id
+}
+
+

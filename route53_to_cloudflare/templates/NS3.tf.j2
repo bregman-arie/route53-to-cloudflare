@@ -1,0 +1,25 @@
+resource "cloudflare_record" "NS_{{ terrafromResource  }}_1" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "NS"
+  value   = "{{ value1 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "NS_{{ terrafromResource  }}_2" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "NS"
+  value   = "{{ value2 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+resource "cloudflare_record" "NS_{{ terrafromResource  }}_3" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "NS"
+  value   = "{{ value3 }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+

@@ -1,0 +1,9 @@
+resource "cloudflare_record" "CNAME_{{ terrafromResource  }}" {
+  name    = "{{ name }}"
+  ttl     = "{{ ttl }}"
+  type    = "CNAME"
+  value   = "{{ value }}"
+  zone_id = cloudflare_zone.{{ zone_id  }}.id
+}
+
+

@@ -1,0 +1,1 @@
+include route53_to_cloudflare/templates/*.j2  route53_to_cloudflare/mod/*.py

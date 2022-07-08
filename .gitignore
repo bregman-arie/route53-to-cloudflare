@@ -1,0 +1,9 @@
+.idea
+build
+dist
+venv
+*.db
+*.egg-info
+*.pyc
+*.pyo
+*.tf
