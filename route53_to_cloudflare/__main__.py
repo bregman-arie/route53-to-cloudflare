@@ -12,7 +12,8 @@ from .mod.MX import set_MX_value
 from .mod.TXT import fix_TXT_Value, set_TXT_value
 
 globals
-ENV = jinja2.Environment(loader=jinja2.PackageLoader('route53_to_cloudflare', 'templates'))
+ENV = jinja2.Environment(loader=jinja2.PackageLoader(
+    'route53_to_cloudflare', 'templates'))
 
 # used to count records that were created
 resources = {
@@ -29,13 +30,14 @@ resources = {
 def set_ZoneName(zone):
     # set zone name
     zoneName=zone['Name'].replace('.', '_')
-    # silce the last '_' from the folder name
+    # slice the last '_' from the folder name
     if zone['Name'].endswith('.'):
         zoneName=zoneName[0:-1]
     return zoneName
 
-# sets the name of the recources in for example resources['A'][the name of the resource]
 def set_ResourceName(record):
+    """sets the name of the resources in 
+    for example resources['A'][the name of the resource]"""
     if record['Name'].endswith('.'):
         name = record['Name'][0:-1].replace('.', '_')
     else:
@@ -60,11 +62,9 @@ def set_RecordName(name):
         recordName = recordName[0:-1]
 
     # if 2 means that it must be the parrent zone so we dont need any change
-    if len(recordName.split('.')) == 2:
-        pass
     # else means we have more than 1 subdomain so we will add the subdomains name for example test.tikal.updater.com ->
     # the name of the record will be test.tikal -> we will strip the last 2 names
-    else:
+    if len(recordName.split('.')) != 2:
         subDomainRecordName = ""
         for i in range(0, len(recordName.split('.'))-2):
             subDomainRecordName = subDomainRecordName +"."+ recordName.split('.')[i]
@@ -72,11 +72,12 @@ def set_RecordName(name):
         recordName = subDomainRecordName[1:]
     return recordName
 
-# remove trailing . for values
 def removeDotFromEnd(value):
+    """Remove trailing . for values"""
     if value.endswith('.'):
         value=value[0:-1]
     return value
+
 
 def render_single_value_records(temp_path, zoneName, recordName, ttl, value, resource, aws_account_id,):
     
@@ -84,6 +85,7 @@ def render_single_value_records(temp_path, zoneName, recordName, ttl, value, res
     with open(f'./{aws_account_id}/{zoneName}/{temp_path}.tf', 'a') as target:
         target.write(template.render(name=recordName, ttl=ttl, value=value, 
         terrafromResource=resource, zone_id=zoneName))
+
 
 def render_MX_records(temp_path, zoneName, recordName, ttl, resource, aws_account_id,
     value1, praiority1, value2="", praiority2="", value3="", praiority3="", 
@@ -99,6 +101,7 @@ def render_MX_records(temp_path, zoneName, recordName, ttl, resource, aws_accoun
                 value5=value5, priority5=praiority5,
                 terrafromResource=resource, zone_id=zoneName)) 
 
+
 def render_NS_records(temp_path, zoneName, recordName, ttl, resource, aws_account_id, 
     value1, value2="", value3="", value4=""):
 
@@ -109,6 +112,7 @@ def render_NS_records(temp_path, zoneName, recordName, ttl, resource, aws_accoun
         value1=value1, value2=value2, value3=value3,
         value4=value4,
         terrafromResource=resource, zone_id=zoneName)) 
+
 
 def render_TXT_records(temp_path, zoneName, recordName, ttl, resource, aws_account_id,
     value1, value2="", value3="", 
@@ -232,7 +236,7 @@ def mx(zoneName, record, aws_account_id):
 
 
 
-# addes resources to resources['TXT'] 
+# adds resources to resources['TXT'] 
 def txt(zoneName, record, aws_account_id):
     # match = re.match(TXT, record)
     match = (record['Type'] == 'TXT')
@@ -436,7 +440,6 @@ def parse_zone(zone, rs, aws_account_id):
 
 # render for all files
 def render(zone, rs, zoneName, account_id, cloudflare_ns_record, aws_account_id):
-    
 
     # main.tf
     template = ENV.get_template('main.tf.j2')
@@ -532,7 +535,7 @@ def render(zone, rs, zoneName, account_id, cloudflare_ns_record, aws_account_id)
             # Write the file out again
             with open(f"./{aws_account_id}/{zoneName}/validateRecords/nslookup{item}.sh", 'w') as file:
                 file.write(filedata)
-    
+
 def main():
     # get input parameters
     args = parse_arguments().parse_args()
@@ -545,9 +548,7 @@ def main():
     hostedzone=client.list_hosted_zones()
 
     # check if folder exists
-    if os.path.exists(f'./{aws_account_id}'):
-        pass
-    else:
+    if not os.path.exists(f'./{aws_account_id}'):
         os.mkdir(f'./{aws_account_id}')
     
     # filter out private domains
@@ -559,15 +560,11 @@ def main():
             # set zone name for folder name and resource name
             zoneName = set_ZoneName(zone)
             # check if folder exists
-            if os.path.exists(f'./{aws_account_id}/{zoneName}'):
-                pass
-            else:
+            if not os.path.exists(f'./{aws_account_id}/{zoneName}'):
                 os.mkdir(f'./{aws_account_id}/{zoneName}')
 
             # check if folder exists
-            if os.path.exists(f'./{aws_account_id}/{zoneName}'+"/validateRecords"):
-                pass
-            else:
+            if not os.path.exists(f'./{aws_account_id}/{zoneName}'+"/validateRecords"):
                 os.mkdir(f'./{aws_account_id}/{zoneName}'+"/validateRecords")
             
             # parsing through the records list and write records to 'record_type.tf'
